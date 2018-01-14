@@ -1,0 +1,12 @@
+name: visualize_crime
+title: visualize_crime
+username:
+account: avinashkz
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 256690
+bundleId: 1175217
+url: https://avinashkz.shinyapps.io/visualize_crime/
+when: 1515907436.18843
+asMultiple: FALSE
+asStatic: FALSE

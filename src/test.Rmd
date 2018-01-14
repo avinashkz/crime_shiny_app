@@ -1,0 +1,81 @@
+---
+title: "Test"
+author: "Avinash"
+date: '2018-01-11'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+data <- read_csv("survey.csv")
+
+data$Country %>% unique()
+
+data %>% group_by(Country) %>% summarise(n())
+
+```
+```{r}
+
+library(maps)
+
+ggplot() +
+    geom_polygon(data = map_data("world"),
+        aes(x = long, y = lat, group = group), colour = "grey", fill = "white") +
+    geom_point(data = rbind(maps::canada.cities, maps::us.cities),
+        aes(x = long, y = lat)) +
+    coord_quickmap()
+
+states <- map_data("state")
+
+city <- map_data("city")
+
+
+?map_data
+
+
+ggplot(data = states) + 
+  geom_polygon(aes(x = long, y = lat, fill = region, group = group), color = "white") + 
+  coord_fixed(1.3) +
+  guides(fill=FALSE)
+```
+
+
+```{r}
+
+crime <- read_csv(file = "crime.csv")
+
+
+
+
+crime %>% group_by(department_name) %>% summarise(n())
+
+
+```
+```{r}
+library(ggmap)
+
+geocode("Atlanta")
+
+crime_mod <- crime %>% mutate(long = geocode(department_name)[1],lat = geocode(department_name)[2])
+
+crime %>% group_by(department_name) %>% summarise(n()) %>% mutate(long = geocode(department_name)[1],lat = geocode(department_name)[2])
+```
+
+```{r}
+crime %>% group_by(department_name) %>% summarise(n())
+
+crime %>% group_by(department_name) %>% summarise(n()) %>% head(3) %>%  rowwise() %>%  mutate(long = geocode(department_name)[[1]],lat = geocode(department_name)[[2]])
+
+geocode("St. Louis, Mo.", output = "all")$results[[1]]$address_components[[2]]$long_name
+
+#https://stackoverflow.com/questions/20937682/r-trying-to-find-latitude-longitude-data-for-cities-in-europe-and-getting-geocod
+
+```
+
