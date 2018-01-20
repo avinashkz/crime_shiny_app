@@ -14,7 +14,7 @@
   background: #000 ;
 }
 
-.main-sidebar{
+.main-sidebar, .treeview-menu{
   background-color:#008d4b !important;
 }
 
@@ -39,4 +39,12 @@
 
 .content-wrapper{
   background-color:#fff;
+}
+
+.shiny-input-container {
+    padding: 0px 15px 0px 15px !important; 
+}
+
+.form-group {
+    margin-bottom: 5px;
 }

@@ -134,6 +134,8 @@ shinyServer(function(input, output) {
     
     geo_click <- event_data("plotly_click")
     mycities <- input$cityInput
+    
+    #observe({(print(mycities))})
     if (length(geo_click) && length(mycities)) {
       x <<- geo_data %>% filter(pop == geo_click$z)
       p <- crime %>% filter(region == x[[1]], year >= input$slider[1], year <= input$slider[2], city %in% mycities) %>% 
