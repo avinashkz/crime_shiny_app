@@ -17,7 +17,6 @@ library(DT)
 
 crime <- read_csv("../results/processed_data.csv")
 
-crime
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
    
@@ -136,14 +135,15 @@ shinyServer(function(input, output) {
     mycities <- input$cityInput
     
     #observe({(print(mycities))})
-    if (length(geo_click) && length(mycities)) {
+    if (length(geo_click) & length(mycities)) {
       x <<- geo_data %>% filter(pop == geo_click$z)
-      p <- crime %>% filter(region == x[[1]], year >= input$slider[1], year <= input$slider[2], city %in% mycities) %>% 
+      p <- crime %>% filter(region == x[[1]], year >= input$slider[1], year <= input$slider[2]) %>% filter(city %in% mycities) %>% 
         plot_ly(x = ~year, y = ~get(y), type = 'scatter', 
                 mode = m, split = ~city,  text = ~paste("Total Crime in ", city)) %>% 
         layout(title = ~paste(title, x[[1]]) ,xaxis = list(title = "Years", titlefont = f, tickfont = f),
                yaxis = list(title = xtitle, titlefont = f, titlefont = f),
                legend = list(font = f),showlegend = c)
+
     } else {
       plotly_empty()
     }
@@ -172,5 +172,30 @@ shinyServer(function(input, output) {
         multiple = TRUE)
     }
   })
+  
+  output$yearOutput <- renderUI({
+    sliderInput(
+      "years",
+      h5("Range of Years:"),
+      min = min(crime$year),
+      max = max(crime$year),
+      value = c(2003, 2015),
+      sep = "",
+      step = 1
+    )
+  })
+  
+  
+  data_func <- reactive({
+    
+    #observe({print(input$years[1] == 1998)})
+    
+    
+  })
+  
+  output$mytable <- renderDataTable({
+     datatable(crime %>% filter(year >= input$years[1], year <= input$years[2]))
+  })
+  
 })
 

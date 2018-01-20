@@ -26,7 +26,7 @@ dashboardPage(skin="green",
     menuItem("Dashboard", tabName = "Dashboard", icon = icon("line-chart"),
              
              sliderInput("slider", h3("Filter year", id = "myh3"),
-                         min = 1975, max = 2015, value = c(1975, 2015)),
+                         min = 1975, max = 2015, value = c(1975, 2015), sep = ""),
              radioButtons("radio", h3("Radio buttons"),
                           choices = list("Total Population" = "total_pop", "Total Crimes" = "violent_crime","Rape" = "rape_sum",
                                          "Assault" = "agg_ass_sum", "Homicide" = "homs_sum", "Robbery" = "rob_sum"),selected = "violent_crime"),
@@ -40,30 +40,56 @@ dashboardPage(skin="green",
                                             "Display Legend" = 3, 
                                             "Enlarge Labels" = 4),
                                 selected = c(3))
-             
-             
-             
     ),
+            
+    menuItem("Data", icon = icon("table"), tabName = "Data",
              
+             uiOutput("yearOutput")
              
-
-    menuItem("Data", icon = icon("table"), tabName = "Data"
              
 )
     
 ),
-    
     width = 300
   ),
 
   dashboardBody(
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "theme.css")),
-    
+    tags$style(type="text/css",
+               ".shiny-output-error { visibility: hidden; }",
+               ".shiny-output-error:before { visibility: hidden; }"
+    ),
+    #https://stackoverflow.com/questions/24652658/suppress-warning-message-in-r-console-of-shiny
+    fluidRow(
+      tabBox(
+        tabPanel(
+        title = "Graphs",
     plotlyOutput("geoPlot"),
     
     withSpinner(plotlyOutput("linePlot2", height="340")),
-    verbatimTextOutput("selection")
+    verbatimTextOutput("selection"),
     
+    dataTableOutput("mytable")
+        ),
+     width = 100,
+    
+    tabPanel(
+      title = "Data"
+    
+    
+      
+      
+      )
+    
+    
+    
+    )
+    
+    
+    
+    
+    
+    )
   )
 )
 
