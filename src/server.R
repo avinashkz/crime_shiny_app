@@ -136,7 +136,7 @@ shinyServer(function(input, output) {
     mycities <- input$cityInput
     if (length(geo_click) && length(mycities)) {
       x <<- geo_data %>% filter(pop == geo_click$z)
-      p <- crime %>% filter(region == x[[1]], year > input$slider[1], year < input$slider[2], city %in% mycities) %>% 
+      p <- crime %>% filter(region == x[[1]], year >= input$slider[1], year <= input$slider[2], city %in% mycities) %>% 
         plot_ly(x = ~year, y = ~get(y), type = 'scatter', 
                 mode = m, split = ~city,  text = ~paste("Total Crime in ", city)) %>% 
         layout(title = ~paste(title, x[[1]]) ,xaxis = list(title = "Years", titlefont = f, tickfont = f),
