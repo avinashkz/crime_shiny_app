@@ -1,0 +1,103 @@
+---
+title: "Untitled"
+author: "Avinash"
+date: '2018-01-19'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r pressure, echo=FALSE}
+
+data <- read_csv(file = "../results/crime_pro.csv")
+
+data <- data[2:17]
+
+data <- data %>% separate(department_name, into = "city", sep = ",")
+
+data %>% group_by(region) %>% summarise(n())
+
+data %>% mutate(if_else(condition = (region == "District of Columbia"), "Washington", false = region))
+
+for (i in 1:nrow(data)){
+  if(data$region[i] == "District of Columbia"){
+    data$region[i] = "Washington"
+  }
+}
+
+codes <- read_csv("../results/codes.csv")
+
+data <- left_join(data, codes)
+
+write_csv(data, "../results/processed_data.csv")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{r}
+library(tidyverse)
+library(plotly)
+
+```
+
+
+```{r}
+geo_data <- crime %>% filter(year == 1975) %>%  group_by(region, code) %>%
+      summarise(pop = sum(total_pop), rape = sum(rape_sum), assault = sum(agg_ass_sum),
+                robbery = sum(rob_sum), homicide = sum(homs_sum))
+    
+    geo_data$hover <- with(geo_data, paste(region, '<br>',
+                                 "Rape: ",rape, '<br>',"Assault: ", assault,'<br>',
+                                 "Robbery: ", robbery, '<br>',"Homicide: ", homicide))
+    
+    # give state boundaries a white border
+    l <- list(color = toRGB("white"), width = 2)
+    
+    # specify some map projection/options
+    g <- list(
+      scope = 'usa',
+      projection = list(type = 'albers usa'),
+      showlakes = TRUE,
+      lakecolor = toRGB('white')
+    )
+    
+    geo_data
+```
+
+
+```{r}
+plot_geo(geo_data, locationmode = 'USA-states') %>%
+      add_trace(
+        z = ~pop, text = ~hover, locations = ~code,
+        color = ~pop, colors = c("#008d4b", "#686868")
+      ) %>%
+      colorbar(title = "Population in Numbers") %>%
+      layout(
+        title = '<br>Population & Crime in US <br>(Crime Stats on Hover)',
+        geo = g
+      )
+```
+```{r}
+
+  output$linePlot <- renderPlot({
+    
+    crime %>% filter(region == "Texas") %>% ggplot(aes(year, violent_crime)) + geom_point(aes(color = fct_reorder(city, total_pop, .desc = TRUE))) +
+      geom_path(aes(group = city, color = city)) + scale_color_discrete("Cities") +
+      labs(title = "Population in Texas", x = "Year", y = "Total Population") +
+      theme(plot.title = element_text(hjust = 0.5, size = 17, face = "bold"), axis.title = element_text(size = 14)) + theme_bw()
+  })
+
+crime <- read_csv("../results/processed_data.csv")
+crime %>% filter(region == "Texas") %>% plot_ly(x = ~year, y = ~violent_crime, name = 'Total Number of Crime', type = 'scatter', mode = 'lines+markers', split = ~city)
+
+crime %>% filter(region == "Texas") %>% arrange(violent_crime) %>% plot_ly(x = ~year, y = ~violent_crime, name = 'Total Number of Crime', type = 'scatter', mode = 'lines+markers', split = ~city)
+```
+
+
+```{r}
+
+```
+

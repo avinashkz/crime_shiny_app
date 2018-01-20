@@ -1,0 +1,42 @@
+.irs-slider {
+  background: #aaa ;
+  border: black;
+}
+
+.irs-bar{
+  background: black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.irs-from, .irs-to{
+  color: #fff;
+  background: #000 ;
+}
+
+.main-sidebar{
+  background-color:#008d4b !important;
+}
+
+.irs-grid-text{
+  color: #000 ;
+}
+
+
+.irs-grid-pol, .irs-grid-pol.small{
+  background:#000;
+}
+
+
+.irs-min, .irs-max{
+  background: rgba(0, 0, 0, 0.40);
+}
+
+#myh3{
+  padding-left: 85px;
+  color:#000;
+}
+
+.content-wrapper{
+  background-color:#fff;
+}
