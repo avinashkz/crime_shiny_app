@@ -48,7 +48,7 @@ shinyServer(function(input, output) {
       ) %>%
       colorbar(title = "Population in Numbers") %>%
       layout(
-        title = '<br>Population & Crime Statistics in US',
+        title = '<br>Population & Crime in US <br>(Crime Stats on Hover)',
         geo = g
       )
   })
@@ -160,7 +160,7 @@ shinyServer(function(input, output) {
         group_by(city) %>% summarise() %>% as.list()
       selectInput(
         "cityInput",
-        h4("Select Cities", id = "myh5"),
+        h3("Select Cities"),
         sort(q$city),
         selected = q$city,
         multiple = TRUE)
@@ -173,6 +173,29 @@ shinyServer(function(input, output) {
     }
   })
   
+  output$yearOutput <- renderUI({
+    sliderInput(
+      "years",
+      h5("Range of Years:"),
+      min = min(crime$year),
+      max = max(crime$year),
+      value = c(2003, 2015),
+      sep = "",
+      step = 1
+    )
+  })
+  
+  
+  data_func <- reactive({
+    
+    #observe({print(input$years[1] == 1998)})
+    
+    
+  })
+  
+  output$mytable <- renderDataTable({
+     datatable(crime %>% filter(year >= input$years[1], year <= input$years[2]))
+  })
   
 })
 

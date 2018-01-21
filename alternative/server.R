@@ -13,9 +13,11 @@ library(plotly)
 library(tidyverse)
 library(shinycssloaders)
 library(DT)
+library(shinydashboard)
+library(shinyjs)
 
 
-crime <- read_csv("../results/processed_data.csv")
+crime <- read_csv("../results/processed_data_national.csv")
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
@@ -23,8 +25,8 @@ shinyServer(function(input, output) {
   output$geoPlot <- renderPlotly({
     
     geo_data <<- crime %>% filter(year == 2014) %>%  group_by(region, code) %>%
-      summarise(pop = sum(total_pop), rape = sum(rape_sum), assault = sum(agg_ass_sum),
-                robbery = sum(rob_sum), homicide = sum(homs_sum))
+      summarise(pop = sum(total_pop, na.rm = TRUE), rape = sum(rape_sum, na.rm = TRUE), assault = sum(agg_ass_sum, na.rm = TRUE),
+                robbery = sum(rob_sum, na.rm = TRUE), homicide = sum(homs_sum, na.rm = TRUE), violent = sum(violent_crime, na.rm = TRUE))
     
     geo_data$hover <- with(geo_data, paste(region, '<br>',
                                  "Rape: ",rape, '<br>',"Assault: ", assault,'<br>',
@@ -43,12 +45,12 @@ shinyServer(function(input, output) {
     
     plot1 <- plot_geo(geo_data, locationmode = 'USA-states') %>%
       add_trace(
-        z = ~pop, text = ~hover, locations = ~code,
-        color = ~pop, colors = c("#008d4b", "#686868")
+        z = ~violent, text = ~hover, locations = ~code,
+        color = ~pop, colors = c("#008d4b", "darkgrey", "#323232")
       ) %>%
-      colorbar(title = "Population in Numbers") %>%
+      colorbar(title = "Crime in Thousands") %>%
       layout(
-        title = '<br>Population & Crime Statistics in US',
+        title = '<br>Interactive Violent Crimes Map (2014)',
         geo = g
       )
   })
@@ -65,35 +67,35 @@ shinyServer(function(input, output) {
     if(b) {m <- 'markers'} else {m <- 'lines+markers'}
     #observe({print(input$radio)})
     
-    if(a) {
+    if(!a) {
     if(input$radio == "total_pop"){
       xtitle = "Population in Millions"
-      title = "Population trend in"
+      title = "Population trend In"
       y = "total_pop"
     }
     else if(input$radio == "violent_crime") {
       xtitle = "Violent Crime in Thousands"
-      title = "Violent Crime trend in"
+      title = "Violent Crime trend In"
       y = "violent_crime"
     }
     else if(input$radio == "rape_sum") {
       xtitle = "Number of Rapes"
-      title = "Rape trend in"
+      title = "Rape trend In"
       y = "rape_sum"
     }
     else if(input$radio == "agg_ass_sum") {
       xtitle = "Assaults in Thousands"
-      title = "Assault trend in"
+      title = "Assault trend In"
       y = "agg_ass_sum"
     }
     else if(input$radio == "homs_sum") {
       xtitle = "Number of Homicides"
-      title = "Homicide trend in"
+      title = "Homicide trend In"
       y = "homs_sum"
     }
     else if(input$radio == "rob_sum") {
       xtitle = "Robberies in Thousands"
-      title = "Robbery trend in"
+      title = "Robbery trend In"
       y = "rob_sum"
     }
     }
@@ -101,32 +103,32 @@ shinyServer(function(input, output) {
     {
     if(input$radio == "total_pop"){
       xtitle = "Population in Millions"
-      title = "Population trend in"
+      title = "Population trend In"
       y = "total_pop"
     }
     else if(input$radio == "violent_crime") {
       xtitle = "Violent Crime Per 100k"
-      title = "Violent Crime trend in"
+      title = "Violent Crime trend In"
       y = "violent_per_100k"
     }
     else if(input$radio == "rape_sum") {
       xtitle = "Rapes Per 100k"
-      title = "Rape trend in"
+      title = "Rape trend In"
       y = "rape_per_100k"
     }
     else if(input$radio == "agg_ass_sum") {
       xtitle = "Assaults Per 100k"
-      title = "Assault trend in"
+      title = "Assault trend In"
       y = "agg_ass_per_100k"
     }
     else if(input$radio == "homs_sum") {
       xtitle = "Homicides  Per 100k"
-      title = "Homicide trend in"
+      title = "Homicide trend In"
       y = "homs_per_100k"
     }
     else if(input$radio == "rob_sum") {
       xtitle = "Robberies Per 100k"
-      title = "Robbery trend in"
+      title = "Robbery trend In"
       y = "rob_per_100k"
     }
     }
@@ -136,16 +138,26 @@ shinyServer(function(input, output) {
     
     #observe({(print(mycities))})
     if (length(geo_click) & length(mycities)) {
-      x <<- geo_data %>% filter(pop == geo_click$z)
+      
+      #observe({print("I am here")})
+      x <<- geo_data %>% filter(violent == geo_click$z)
       p <- crime %>% filter(region == x[[1]], year >= input$slider[1], year <= input$slider[2]) %>% filter(city %in% mycities) %>% 
         plot_ly(x = ~year, y = ~get(y), type = 'scatter', 
-                mode = m, split = ~city,  text = ~paste("Total Crime in ", city)) %>% 
+                mode = m, split = ~city,  text = ~paste("Total Crime In ", city)) %>% 
         layout(title = ~paste(title, x[[1]]) ,xaxis = list(title = "Years", titlefont = f, tickfont = f),
                yaxis = list(title = xtitle, titlefont = f, titlefont = f),
                legend = list(font = f),showlegend = c)
 
     } else {
-      plotly_empty()
+      #observe({print("I am here too")})
+      plot_data <- crime %>% filter(year >= input$slider[1], year <= input$slider[2])  %>%  group_by(region, year) %>%
+        summarise(custom = sum(get(y), na.rm = TRUE))
+      plot_data %>% 
+        plot_ly(x = ~year, y = ~custom, type = 'scatter', 
+                mode = m, split = ~region,  text = ~paste("Total Crime In ", region)) %>% 
+        layout(title =  ~paste(title, "US") ,xaxis = list(title = "Years", titlefont = f, tickfont = f),
+               yaxis = list(title = xtitle, titlefont = f, titlefont = f),
+               legend = list(font = f),showlegend = c)
     }
   })
   
@@ -155,12 +167,13 @@ shinyServer(function(input, output) {
     
     d <- event_data("plotly_click")
     if (length(d)) {
-      x <- geo_data %>% filter(pop == d$z)
+      #observe({print(d)})
+      x <- geo_data %>% filter(violent == d$z)
       q <- crime %>% filter(region == x[[1]]) %>%
         group_by(city) %>% summarise() %>% as.list()
       selectInput(
         "cityInput",
-        h4("Select Cities", id = "myh5"),
+        h3("Select Cities"),
         sort(q$city),
         selected = q$city,
         multiple = TRUE)
@@ -173,6 +186,31 @@ shinyServer(function(input, output) {
     }
   })
   
+
+  data_func <- reactive({
+    
+    mycities <- input$cityInput
+    #observe({print(mycities)})
+    if(length(mycities)) {crime %>% filter(year >= input$slider[1], year <= input$slider[2]) %>% filter(city %in% mycities)}
+    else
+    {crime %>% filter(year >= input$slider[1], year <= input$slider[2])}
+    
+  })
+  
+  output$mytable <- renderDataTable({
+    
+    DT::datatable(data = data_func(),
+                  extensions = 'Buttons', 
+                  options = list(
+                    scrollX = TRUE,
+                    dom = 'Bfrtip',
+                    buttons = c('copy', 'csv', 'excel', 'pdf')
+    ))
+  })
+  
+  output$menuitem <- renderMenu({
+    menuItem("Menu item", icon = icon("calendar"))
+  })
   
 })
 

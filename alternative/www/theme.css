@@ -43,12 +43,12 @@
 
 .control-label, .sidebar{
   color:#000;
-  font-size: 105%;
+  font-size: 110%;
 }
 
 .logo, .main-header{
   color:#000 !important;
-  font-weight:500 !important;
+  font-weight:400 !important;
   font-size:140% !important;
   background-color: #008d4b !important;
 }

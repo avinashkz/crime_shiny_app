@@ -32,6 +32,15 @@ codes <- read_csv("../results/codes.csv")
 data <- left_join(data, codes)
 
 write_csv(data, "../results/processed_data.csv")
+
+#####
+
+crime <- read_csv("../results/processed_data.csv")
+
+crime_nat <- crime %>% filter(city != "National")
+
+write_csv(crime_nat, "../results/processed_data_national.csv")
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
