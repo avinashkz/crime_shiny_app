@@ -17,7 +17,7 @@ library(shinydashboard)
 library(shinyjs)
 
 
-crime <- read_csv("../results/processed_data_national.csv")
+crime <- read_csv("processed_data_national.csv")
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
@@ -46,11 +46,11 @@ shinyServer(function(input, output) {
     plot1 <- plot_geo(geo_data, locationmode = 'USA-states') %>%
       add_trace(
         z = ~violent, text = ~hover, locations = ~code,
-        color = ~pop, colors = c("#008d4b", "darkgrey", "#323232")
+        color = ~pop, colors = c("#008d4b", "#323232")
       ) %>%
       colorbar(title = "Crime in Thousands") %>%
       layout(
-        title = '<br>Interactive Violent Crimes Map (2014)',
+        title = '<br>Interactive Map of Crimes in USA(2014)',
         geo = g
       )
   })
@@ -63,39 +63,39 @@ shinyServer(function(input, output) {
     c <- str_detect(paste(input$checkGroup, collapse = ","), "3")
     d <- str_detect(paste(input$checkGroup, collapse = ","), "4")
     
-    if(d) {f <- list(size = 16)} else {f <- list(size = 14)}
+    if(d) {f <- list(size = 17)} else {f <- list(size = 14)}
     if(b) {m <- 'markers'} else {m <- 'lines+markers'}
     #observe({print(input$radio)})
     
     if(!a) {
     if(input$radio == "total_pop"){
       xtitle = "Population in Millions"
-      title = "Population trend In"
+      title = "Population Trend In"
       y = "total_pop"
     }
     else if(input$radio == "violent_crime") {
       xtitle = "Violent Crime in Thousands"
-      title = "Violent Crime trend In"
+      title = "Violent Crime Trend In"
       y = "violent_crime"
     }
     else if(input$radio == "rape_sum") {
       xtitle = "Number of Rapes"
-      title = "Rape trend In"
+      title = "Rape Trend In"
       y = "rape_sum"
     }
     else if(input$radio == "agg_ass_sum") {
       xtitle = "Assaults in Thousands"
-      title = "Assault trend In"
+      title = "Assault Trend In"
       y = "agg_ass_sum"
     }
     else if(input$radio == "homs_sum") {
       xtitle = "Number of Homicides"
-      title = "Homicide trend In"
+      title = "Homicide Trend In"
       y = "homs_sum"
     }
     else if(input$radio == "rob_sum") {
       xtitle = "Robberies in Thousands"
-      title = "Robbery trend In"
+      title = "Robbery Trend In"
       y = "rob_sum"
     }
     }
@@ -107,28 +107,28 @@ shinyServer(function(input, output) {
       y = "total_pop"
     }
     else if(input$radio == "violent_crime") {
-      xtitle = "Violent Crime Per 100k"
-      title = "Violent Crime trend In"
+      xtitle = "Violent Crimes Per 100k"
+      title = "Violent Crime Trend In"
       y = "violent_per_100k"
     }
     else if(input$radio == "rape_sum") {
       xtitle = "Rapes Per 100k"
-      title = "Rape trend In"
+      title = "Rape Trend In"
       y = "rape_per_100k"
     }
     else if(input$radio == "agg_ass_sum") {
       xtitle = "Assaults Per 100k"
-      title = "Assault trend In"
+      title = "Assault Trend In"
       y = "agg_ass_per_100k"
     }
     else if(input$radio == "homs_sum") {
       xtitle = "Homicides  Per 100k"
-      title = "Homicide trend In"
+      title = "Homicide Trend In"
       y = "homs_per_100k"
     }
     else if(input$radio == "rob_sum") {
       xtitle = "Robberies Per 100k"
-      title = "Robbery trend In"
+      title = "Robbery Trend In"
       y = "rob_per_100k"
     }
     }
@@ -144,10 +144,18 @@ shinyServer(function(input, output) {
       p <- crime %>% filter(region == x[[1]], year >= input$slider[1], year <= input$slider[2]) %>% filter(city %in% mycities) %>% 
         plot_ly(x = ~year, y = ~get(y), type = 'scatter', 
                 mode = m, split = ~city,  text = ~paste("Total Crime In ", city)) %>% 
-        layout(title = ~paste(title, x[[1]]) ,xaxis = list(title = "Years", titlefont = f, tickfont = f),
+        layout(title = ~paste("<br>",title, x[[1]]), font = f ,xaxis = list(title = "Years", titlefont = f, tickfont = f),
                yaxis = list(title = xtitle, titlefont = f, titlefont = f),
                legend = list(font = f),showlegend = c)
 
+    # } else if (length(mycities)){
+    #   #observe({print("I am here too")})
+    #   p <- crime %>% filter(year >= input$slider[1], year <= input$slider[2]) %>% filter(city %in% mycities) %>% 
+    #     plot_ly(x = ~year, y = ~get(y), type = 'scatter', 
+    #             mode = m, split = ~city,  text = ~paste("Total Crime In ", city)) %>% 
+    #     layout(title = ~paste("<br>",title, x[[1]]), font = f ,xaxis = list(title = "Years", titlefont = f, tickfont = f),
+    #            yaxis = list(title = xtitle, titlefont = f, titlefont = f),
+    #            legend = list(font = f),showlegend = c)
     } else {
       #observe({print("I am here too")})
       plot_data <- crime %>% filter(year >= input$slider[1], year <= input$slider[2])  %>%  group_by(region, year) %>%
@@ -155,7 +163,7 @@ shinyServer(function(input, output) {
       plot_data %>% 
         plot_ly(x = ~year, y = ~custom, type = 'scatter', 
                 mode = m, split = ~region,  text = ~paste("Total Crime In ", region)) %>% 
-        layout(title =  ~paste(title, "US") ,xaxis = list(title = "Years", titlefont = f, tickfont = f),
+        layout(title =  ~paste("<br>",title, "US"), font = f, xaxis = list(title = "Years", titlefont = f, tickfont = f),
                yaxis = list(title = xtitle, titlefont = f, titlefont = f),
                legend = list(font = f),showlegend = c)
     }
@@ -173,20 +181,19 @@ shinyServer(function(input, output) {
         group_by(city) %>% summarise() %>% as.list()
       selectInput(
         "cityInput",
-        h3("Select Cities"),
+        h3("Cities Selected"),
         sort(q$city),
         selected = q$city,
         multiple = TRUE)
     } else {
       selectInput(
         "cityInput",
-        h3("Select Cities"),
+        h3("Cities Selected"),
         sort(unique(crime$city)),
         multiple = TRUE)
     }
   })
   
-
   data_func <- reactive({
     
     mycities <- input$cityInput

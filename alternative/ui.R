@@ -21,32 +21,28 @@ options(spinner.color="#008d4b")
 dashboardPage(skin="green",
   
               
-  dashboardHeader(title = "Violent Crimes in US", titleWidth = 300),
+  dashboardHeader(title = "Violent Crimes in USA", titleWidth = 300),
   dashboardSidebar(
     sidebarMenu(
       menuItem("Dashboard", tabName = "Dashboard", icon = icon("line-chart")),
+      menuItem("Data Table", tabName = "Data", icon = icon("table")),
+               sliderInput("slider", h3("Filter Year", id = "myh3"),
+                           min = 1975, max = 2015, value = c(1975, 2015), sep = ""),
+               radioButtons("radio", h3("Select Feature"),
+                            choices = list("Total Population" = "total_pop", "Total Crimes" = "violent_crime","Rape" = "rape_sum",
+                                           "Assault" = "agg_ass_sum", "Homicide" = "homs_sum", "Robbery" = "rob_sum"),selected = "violent_crime"),
+               
+               uiOutput("cities"),
+               
+               checkboxGroupInput("checkGroup", 
+                                  h3("Extra Options"), 
+                                  choices = c("Crime Per 100k" = 1, 
+                                              "Remove Trace" = 2, 
+                                              "Display Legend" = 3, 
+                                              "Enlarge Labels" = 4),
+                                  selected = c(3))
+     
 
-sliderInput("slider", h3("Filter year", id = "myh3"),
-            min = 1975, max = 2015, value = c(1975, 2015), sep = ""),
-radioButtons("radio", h3("Radio buttons"),
-             choices = list("Total Population" = "total_pop", "Total Crimes" = "violent_crime","Rape" = "rape_sum",
-                            "Assault" = "agg_ass_sum", "Homicide" = "homs_sum", "Robbery" = "rob_sum"),selected = "violent_crime"),
-
-uiOutput("cities"),
-
-checkboxGroupInput("checkGroup", 
-                   h3("Extra Options"), 
-                   choices = c("View Crime Proportions" = 1, 
-                               "Remove Trace" = 2, 
-                               "Display Legend" = 3, 
-                               "Enlarge Labels" = 4),
-                   selected = c(3)),
-
-menuItem("Table", tabName = "Data", icon = icon("table"),
-         badgeLabel = "View Data", badgeColor = "green")
-
-
-    
 ),
     width = 300
   ),
@@ -63,6 +59,7 @@ menuItem("Table", tabName = "Data", icon = icon("table"),
               plotlyOutput("geoPlot"),
               withSpinner(plotlyOutput("linePlot2", height="340"))
               ),
+      
       tabItem(tabName = "Data",
               dataTableOutput("mytable"))
       
