@@ -21,18 +21,21 @@ dashboardPage(skin="green",
       #Tab for table
       menuItem("Data Table", tabName = "Data", icon = icon("table")),
       
-      #Slider for filtering year
+              #Slider for filtering year
                sliderInput("slider", h3("Filter Year", id = "myh3"),
                            min = 1975, max = 2015, value = c(1975, 2015), sep = ""),
-      #Radio buttons for selecting y-axis for line and scatter plot
+      
+               #Radio buttons for selecting y-axis for line and scatter plot
                radioButtons("radio", h3("Select Feature"),
                             choices = list("Total Population" = "total_pop", "Total Crimes" = "violent_crime","Rape" = "rape_sum",
                                            "Assault" = "agg_ass_sum", "Homicide" = "homs_sum", "Robbery" = "rob_sum"),selected = "violent_crime"),
       
-      # Multiple cities selector for line and scatter plot
+      
+              # Multiple cities selector for line and scatter plot
                uiOutput("cities"),
                
-      # Extra options for user.
+      
+              # Extra options for user.
                checkboxGroupInput("checkGroup", 
                                   h3("Extra Options"), 
                                   choices = c("Crime Per 100k" = 1, 
@@ -42,9 +45,9 @@ dashboardPage(skin="green",
                                   selected = c(3))
      
 
-),
-    width = 300
-  ),
+              ),
+                 width = 300
+              ),
 
   dashboardBody(
     
@@ -73,8 +76,8 @@ dashboardPage(skin="green",
     
     #https://stackoverflow.com/questions/24652658/suppress-warning-message-in-r-console-of-shiny
    
-  )
+             )
 
-)
+      )
 
 
