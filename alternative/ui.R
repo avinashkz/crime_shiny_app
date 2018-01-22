@@ -1,12 +1,3 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
 library(shinydashboard)
 library(shinythemes)
@@ -24,16 +15,24 @@ dashboardPage(skin="green",
   dashboardHeader(title = "Violent Crimes in USA", titleWidth = 300),
   dashboardSidebar(
     sidebarMenu(
+      #Tab for Dashboard
       menuItem("Dashboard", tabName = "Dashboard", icon = icon("line-chart")),
+      
+      #Tab for table
       menuItem("Data Table", tabName = "Data", icon = icon("table")),
+      
+      #Slider for filtering year
                sliderInput("slider", h3("Filter Year", id = "myh3"),
                            min = 1975, max = 2015, value = c(1975, 2015), sep = ""),
+      #Radio buttons for selecting y-axis for line and scatter plot
                radioButtons("radio", h3("Select Feature"),
                             choices = list("Total Population" = "total_pop", "Total Crimes" = "violent_crime","Rape" = "rape_sum",
                                            "Assault" = "agg_ass_sum", "Homicide" = "homs_sum", "Robbery" = "rob_sum"),selected = "violent_crime"),
-               
+      
+      # Multiple cities selector for line and scatter plot
                uiOutput("cities"),
                
+      # Extra options for user.
                checkboxGroupInput("checkGroup", 
                                   h3("Extra Options"), 
                                   choices = c("Crime Per 100k" = 1, 
@@ -48,17 +47,24 @@ dashboardPage(skin="green",
   ),
 
   dashboardBody(
+    
+    #Adding custom css file.
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "theme.css")),
+    #Suppressing warning messages for shiny
     tags$style(type="text/css",
                ".shiny-output-error { visibility: hidden; }",
                ".shiny-output-error:before { visibility: hidden; }"
     ),
     
     tabItems(
+      
+      #Tab for dashboard
+      
       tabItem(tabName = "Dashboard",
               plotlyOutput("geoPlot"),
               withSpinner(plotlyOutput("linePlot2", height="340"))
               ),
+      #Tab for table.
       
       tabItem(tabName = "Data",
               dataTableOutput("mytable"))

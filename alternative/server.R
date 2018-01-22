@@ -1,13 +1,3 @@
-
-#
-# This is the server logic of a Shiny web application. You can run the 
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
 library(plotly)
 library(tidyverse)
@@ -17,17 +7,21 @@ library(shinydashboard)
 library(shinyjs)
 
 
+#Loading the dataset without national
 crime <- read_csv("processed_data_national.csv")
 
-# Define server logic required to draw a histogram
+
 shinyServer(function(input, output) {
    
+  #Functino for geo plot
   output$geoPlot <- renderPlotly({
     
+    #Filter the data for plotting the geo map
     geo_data <<- crime %>% filter(year == 2014) %>%  group_by(region, code) %>%
       summarise(pop = sum(total_pop, na.rm = TRUE), rape = sum(rape_sum, na.rm = TRUE), assault = sum(agg_ass_sum, na.rm = TRUE),
                 robbery = sum(rob_sum, na.rm = TRUE), homicide = sum(homs_sum, na.rm = TRUE), violent = sum(violent_crime, na.rm = TRUE))
     
+    #Creating column for contents to hover
     geo_data$hover <- with(geo_data, paste(region, '<br>',
                                  "Rape: ",rape, '<br>',"Assault: ", assault,'<br>',
                                  "Robbery: ", robbery, '<br>',"Homicide: ", homicide))
@@ -43,6 +37,7 @@ shinyServer(function(input, output) {
       lakecolor = toRGB('white')
     )
     
+    #Plot geo plot using shiny
     plot1 <- plot_geo(geo_data, locationmode = 'USA-states') %>%
       add_trace(
         z = ~violent, text = ~hover, locations = ~code,
@@ -55,19 +50,28 @@ shinyServer(function(input, output) {
       )
   })
   
-  
+  # Function for line and scatter plot
   output$linePlot2 <- renderPlotly({
     
+    #Reading in the extra option multiple selector input
     a <- str_detect(paste(input$checkGroup, collapse = ","), "1")
     b <- str_detect(paste(input$checkGroup, collapse = ","), "2")
     c <- str_detect(paste(input$checkGroup, collapse = ","), "3")
     d <- str_detect(paste(input$checkGroup, collapse = ","), "4")
     
+    #Setting the font size
     if(d) {f <- list(size = 17)} else {f <- list(size = 14)}
+    #Switching between line and markers
     if(b) {m <- 'markers'} else {m <- 'lines+markers'}
     #observe({print(input$radio)})
     
+    
+    #Switching the y-axis of scatter and line plot
+    
     if(!a) {
+      
+      #To plot total count
+      
     if(input$radio == "total_pop"){
       xtitle = "Population in Millions"
       title = "Population Trend In"
@@ -101,6 +105,9 @@ shinyServer(function(input, output) {
     }
     else
     {
+      
+      #For plots 100k variables
+      
     if(input$radio == "total_pop"){
       xtitle = "Population in Millions"
       title = "Population trend In"
@@ -133,7 +140,10 @@ shinyServer(function(input, output) {
     }
     }
     
+    #Detect geo click
     geo_click <- event_data("plotly_click")
+    
+    #Readin the input from city selector
     mycities <- input$cityInput
     
     #observe({(print(mycities))})
@@ -171,6 +181,8 @@ shinyServer(function(input, output) {
   
   #https://stackoverflow.com/questions/36980999/change-plotly-chart-y-variable-based-on-selectinput#
   
+  #Function for multiple city selector
+  
   output$cities <- renderUI({
     
     d <- event_data("plotly_click")
@@ -194,6 +206,8 @@ shinyServer(function(input, output) {
     }
   })
   
+  #To update data table when filters change
+  
   data_func <- reactive({
     
     mycities <- input$cityInput
@@ -203,6 +217,8 @@ shinyServer(function(input, output) {
     {crime %>% filter(year >= input$slider[1], year <= input$slider[2])}
     
   })
+  
+  #Functino to output the data table
   
   output$mytable <- renderDataTable({
     
@@ -214,6 +230,8 @@ shinyServer(function(input, output) {
                     buttons = c('copy', 'csv', 'excel', 'pdf')
     ))
   })
+  
+  #For rendering the tabs of shiny dashboard
   
   output$menuitem <- renderMenu({
     menuItem("Menu item", icon = icon("calendar"))
