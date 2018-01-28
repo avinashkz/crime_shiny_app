@@ -187,6 +187,7 @@ shinyServer(function(input, output) {
     if (length(geo_click) & length(mycities)) {
       
       #observe({print("I am here")})
+      #z is still the old value. Need to automate the new value!
       x <<- geo_data %>% filter(get(input$radio) == geo_click$z)
       p <- crime %>% filter(region == x[[1]], year >= input$slider[1], year <= input$slider[2]) %>% filter(city %in% mycities) %>% 
         plot_ly(x = ~year, y = ~get(y), type = 'scatter', 
