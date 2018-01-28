@@ -55,13 +55,13 @@ shinyServer(function(input, output) {
     
     #Filter the data for plotting the geo map
     
-    base <- crime  %>%  group_by(region, code) %>%
+    base <- crime  %>%  group_by(region, code, city) %>%
       summarise(pop = mean(total_pop, na.rm = TRUE), rape = mean(rape_sum, na.rm = TRUE), assault = mean(agg_ass_sum, na.rm = TRUE),
                 robbery = mean(rob_sum, na.rm = TRUE), homicide = mean(homs_sum, na.rm = TRUE), violent = mean(violent_crime, na.rm = TRUE))
     
-    geo_data <<- crime  %>%  group_by(region, code) %>%
-      summarise(pop = sum(total_pop, na.rm = TRUE), rape = sum(rape_sum, na.rm = TRUE), assault = sum(agg_ass_sum, na.rm = TRUE),
-                robbery = sum(rob_sum, na.rm = TRUE), homicide = sum(homs_sum, na.rm = TRUE), violent = sum(violent_crime, na.rm = TRUE))
+    geo_data <<- base  %>%  group_by(region, code) %>%
+      summarise(pop = sum(pop, na.rm = TRUE), rape = sum(rape, na.rm = TRUE), assault = sum(assault, na.rm = TRUE),
+                robbery = sum(robbery, na.rm = TRUE), homicide = sum(homicide, na.rm = TRUE), violent = sum(violent, na.rm = TRUE))
     
     #Creating column for contents to hover
     geo_data$hover <- with(geo_data, paste(region, '<br>',
