@@ -54,7 +54,12 @@ shinyServer(function(input, output) {
     }
     
     #Filter the data for plotting the geo map
-    geo_data <<- crime %>% filter(year == 2014) %>%  group_by(region, code) %>%
+    
+    base <- crime  %>%  group_by(region, code) %>%
+      summarise(pop = mean(total_pop, na.rm = TRUE), rape = mean(rape_sum, na.rm = TRUE), assault = mean(agg_ass_sum, na.rm = TRUE),
+                robbery = mean(rob_sum, na.rm = TRUE), homicide = mean(homs_sum, na.rm = TRUE), violent = mean(violent_crime, na.rm = TRUE))
+    
+    geo_data <<- crime  %>%  group_by(region, code) %>%
       summarise(pop = sum(total_pop, na.rm = TRUE), rape = sum(rape_sum, na.rm = TRUE), assault = sum(agg_ass_sum, na.rm = TRUE),
                 robbery = sum(rob_sum, na.rm = TRUE), homicide = sum(homs_sum, na.rm = TRUE), violent = sum(violent_crime, na.rm = TRUE))
     
@@ -222,6 +227,8 @@ shinyServer(function(input, output) {
   
   output$cities <- renderUI({
     
+ 
+    
     d <- event_data("plotly_click")
     if (length(d)) {
       #observe({print(d)})
@@ -233,12 +240,6 @@ shinyServer(function(input, output) {
         h3("Cities Selected"),
         sort(q$city),
         selected = q$city,
-        multiple = TRUE)
-    } else {
-      selectInput(
-        "cityInput",
-        h3("Cities Selected"),
-        sort(unique(crime$city)),
         multiple = TRUE)
     }
   })
