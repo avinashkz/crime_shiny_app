@@ -187,7 +187,7 @@ shinyServer(function(input, output) {
     if (length(geo_click) & length(mycities)) {
       
       #observe({print("I am here")})
-      x <<- geo_data %>% filter(violent == geo_click$z)
+      x <<- geo_data %>% filter(get(input$radio) == geo_click$z)
       p <- crime %>% filter(region == x[[1]], year >= input$slider[1], year <= input$slider[2]) %>% filter(city %in% mycities) %>% 
         plot_ly(x = ~year, y = ~get(y), type = 'scatter', 
                 mode = m, split = ~city,  text = ~paste("Total Crime In ", city)) %>% 
@@ -226,8 +226,10 @@ shinyServer(function(input, output) {
     
     d <- event_data("plotly_click")
     if (length(d)) {
-      #observe({print(d)})
+      observe({print(d)})
+      observe({print(input$radio)})
       x <- geo_data %>% filter(get(input$radio) == d$z)
+      observe({print(x)})
       q <- crime %>% filter(region == x[[1]]) %>%
         group_by(city) %>% summarise() %>% as.list()
       selectInput(
