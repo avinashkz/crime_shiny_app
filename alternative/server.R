@@ -109,32 +109,32 @@ shinyServer(function(input, output) {
       
       #To plot total count
       
-    if(input$radio == "total_pop"){
+    if(input$radio == "pop"){
       xtitle = "Population in Millions"
       title = "Population Trend In"
       y = "total_pop"
     }
-    else if(input$radio == "violent_crime") {
+    else if(input$radio == "violent") {
       xtitle = "Violent Crime in Thousands"
       title = "Violent Crime Trend In"
       y = "violent_crime"
     }
-    else if(input$radio == "rape_sum") {
+    else if(input$radio == "rape") {
       xtitle = "Number of Rapes"
       title = "Rape Trend In"
       y = "rape_sum"
     }
-    else if(input$radio == "agg_ass_sum") {
+    else if(input$radio == "assault") {
       xtitle = "Assaults in Thousands"
       title = "Assault Trend In"
       y = "agg_ass_sum"
     }
-    else if(input$radio == "homs_sum") {
+    else if(input$radio == "homicide") {
       xtitle = "Number of Homicides"
       title = "Homicide Trend In"
       y = "homs_sum"
     }
-    else if(input$radio == "rob_sum") {
+    else if(input$radio == "robbbery") {
       xtitle = "Robberies in Thousands"
       title = "Robbery Trend In"
       y = "rob_sum"
@@ -145,32 +145,32 @@ shinyServer(function(input, output) {
       
       #For plots 100k variables
       
-    if(input$radio == "total_pop"){
+    if(input$radio == "pop"){
       xtitle = "Population in Millions"
       title = "Population trend In"
       y = "total_pop"
     }
-    else if(input$radio == "violent_crime") {
+    else if(input$radio == "violent") {
       xtitle = "Violent Crimes Per 100k"
       title = "Violent Crime Trend In"
       y = "violent_per_100k"
     }
-    else if(input$radio == "rape_sum") {
+    else if(input$radio == "rape") {
       xtitle = "Rapes Per 100k"
       title = "Rape Trend In"
       y = "rape_per_100k"
     }
-    else if(input$radio == "agg_ass_sum") {
+    else if(input$radio == "assault") {
       xtitle = "Assaults Per 100k"
       title = "Assault Trend In"
       y = "agg_ass_per_100k"
     }
-    else if(input$radio == "homs_sum") {
+    else if(input$radio == "homicide") {
       xtitle = "Homicides  Per 100k"
       title = "Homicide Trend In"
       y = "homs_per_100k"
     }
-    else if(input$radio == "rob_sum") {
+    else if(input$radio == "robbery") {
       xtitle = "Robberies Per 100k"
       title = "Robbery Trend In"
       y = "rob_per_100k"
@@ -227,7 +227,7 @@ shinyServer(function(input, output) {
     d <- event_data("plotly_click")
     if (length(d)) {
       #observe({print(d)})
-      x <- geo_data %>% filter(violent == d$z)
+      x <- geo_data %>% filter(get(input$radio) == d$z)
       q <- crime %>% filter(region == x[[1]]) %>%
         group_by(city) %>% summarise() %>% as.list()
       selectInput(
