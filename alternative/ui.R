@@ -14,26 +14,29 @@ dashboardPage(skin="green",
               
   dashboardHeader(title = "Violent Crimes in USA", titleWidth = 300),
   dashboardSidebar(
-    sidebarMenu(
+    sidebarMenu(id="menu",
       #Tab for Dashboard
       menuItem("Dashboard", tabName = "Dashboard", icon = icon("line-chart")),
       
       #Tab for table
       menuItem("Data Table", tabName = "Data", icon = icon("table")),
       
-              #Slider for filtering year
+              conditionalPanel(
+                "input.menu == 'Dashboard'",
+                
+                #Slider for filtering year
                sliderInput("slider", h3("Filter Year", id = "myh3"),
                            min = 1975, max = 2015, value = c(1975, 2015), sep = ""),
+               
+               # Multiple cities selector for line and scatter plot
+               uiOutput("cities"),
       
                #Radio buttons for selecting y-axis for line and scatter plot
                radioButtons("radio", h3("Select Feature"),
                             choices = list("Total Population" = "total_pop", "Total Crimes" = "violent_crime","Rape" = "rape_sum",
                                            "Assault" = "agg_ass_sum", "Homicide" = "homs_sum", "Robbery" = "rob_sum"),selected = "violent_crime"),
-      
-      
-              # Multiple cities selector for line and scatter plot
-               uiOutput("cities"),
                
+               h3("Click on Map to Filter States"),
       
               # Extra options for user.
                checkboxGroupInput("checkGroup", 
@@ -43,6 +46,12 @@ dashboardPage(skin="green",
                                               "Display Legend" = 3, 
                                               "Enlarge Labels" = 4),
                                   selected = c(3))
+              
+              
+              
+              #https://stackoverflow.com/questions/29925585/conditional-panel-in-shiny-dashboard
+              
+              )
      
 
               ),
@@ -63,8 +72,17 @@ dashboardPage(skin="green",
       
       #Tab for dashboard
       
-      tabItem(tabName = "Dashboard",
-              plotlyOutput("geoPlot"),
+      tabItem(
+            
+              tabName = "Dashboard",
+              
+              fluidRow(
+                column(2,tags$div(class = "alert alert-dismissible alert-warning",
+                                  tags$h4(class = "alert-heading", "Click on Map to Filter States")
+                                  )),
+                column(10,plotlyOutput("geoPlot"))
+                       
+              ),
               withSpinner(plotlyOutput("linePlot2", height="340"))
               ),
       #Tab for table.

@@ -45,7 +45,7 @@ shinyServer(function(input, output) {
       ) %>%
       colorbar(title = "Crime in Thousands") %>%
       layout(
-        title = '<br>Interactive Map of Crimes in USA(2014)',
+        title = '<br>Interactive Map(Click to Filter States)',
         geo = g
       )
   })
