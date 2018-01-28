@@ -35,8 +35,8 @@ dashboardPage(skin="green",
     conditionalPanel("input.menu == 'Dashboard'",
                #Radio buttons for selecting y-axis for line and scatter plot
                radioButtons("radio", h3("Select Feature", id = "myh3"),
-                            choices = list( "Total Crimes" = "violent_crime","Total Population" = "total_pop","Rape" = "rape_sum",
-                                           "Assault" = "agg_ass_sum", "Homicide" = "homs_sum", "Robbery" = "rob_sum"),selected = "violent_crime"),
+                            choices = list( "Total Crimes" = "violent","Total Population" = "pop","Rape" = "rape",
+                                           "Assault" = "assault", "Homicide" = "homicide", "Robbery" = "robbery"),selected = "violent"),
                
       
               # Extra options for user.
