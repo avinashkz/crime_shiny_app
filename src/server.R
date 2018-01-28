@@ -1,31 +1,64 @@
-
-#
-# This is the server logic of a Shiny web application. You can run the 
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
 library(plotly)
 library(tidyverse)
 library(shinycssloaders)
 library(DT)
+library(shinydashboard)
+library(shinyjs)
 
 
-crime <- read_csv("../results/processed_data.csv")
+#Loading the dataset without national
+crime <- read_csv("processed_data_national.csv")
 
-# Define server logic required to draw a histogram
+
 shinyServer(function(input, output) {
    
+  #Functino for geo plot
   output$geoPlot <- renderPlotly({
     
-    geo_data <<- crime %>% filter(year == 2014) %>%  group_by(region, code) %>%
-      summarise(pop = sum(total_pop), rape = sum(rape_sum), assault = sum(agg_ass_sum),
-                robbery = sum(rob_sum), homicide = sum(homs_sum))
+    if(input$radio == "pop"){
+      xtitle = "Population in Millions"
+      title = "Population"
+      q = "pop"
+      color = "#FFC300"
+    }
+    else if(input$radio == "violent") {
+      xtitle = "Violent Crime in Thousands"
+      title = "Violent Crimes"
+      q = "violent"
+      color = "#008d4b"
+    }
+    else if(input$radio == "rape") {
+      xtitle = "Number of Rapes"
+      title = "Rape"
+      q = "rape"
+      color = "#F39C12"
+    }
+    else if(input$radio == "assault") {
+      xtitle = "Assaults in Thousands"
+      title = "Assault"
+      q = "assault"
+      color = "#E74C3C"
+    }
+    else if(input$radio == "homicide") {
+      xtitle = "Number of Homicides"
+      title = "Homicide"
+      q = "homicide"
+      color = "#2980B9"
+    }
+    else if(input$radio == "robbery") {
+      xtitle = "Robberies in Thousands"
+      title = "Robbery"
+      q = "robbery"
+      color = "#8E44AD"
+    }
     
+    #Filter the data for plotting the geo map
+    geo_data <<- crime %>% filter(year == 2014) %>%  group_by(region, code) %>%
+      summarise(pop = sum(total_pop, na.rm = TRUE), rape = sum(rape_sum, na.rm = TRUE), assault = sum(agg_ass_sum, na.rm = TRUE),
+                robbery = sum(rob_sum, na.rm = TRUE), homicide = sum(homs_sum, na.rm = TRUE), violent = sum(violent_crime, na.rm = TRUE))
+    
+    #Creating column for contents to hover
     geo_data$hover <- with(geo_data, paste(region, '<br>',
                                  "Rape: ",rape, '<br>',"Assault: ", assault,'<br>',
                                  "Robbery: ", robbery, '<br>',"Homicide: ", homicide))
@@ -41,138 +74,204 @@ shinyServer(function(input, output) {
       lakecolor = toRGB('white')
     )
     
+    #Plot geo plot using shiny
     plot1 <- plot_geo(geo_data, locationmode = 'USA-states') %>%
       add_trace(
-        z = ~pop, text = ~hover, locations = ~code,
-        color = ~pop, colors = c("#008d4b", "#686868")
+        z = ~get(q), text = ~hover, locations = ~code,
+        color = ~pop, colors = c(color, "#323232")
       ) %>%
-      colorbar(title = "Population in Numbers") %>%
+      colorbar(title = xtitle) %>%
       layout(
-        title = '<br>Population & Crime Statistics in US',
+        title = paste('<br>Interactive', title, 'Map(Click to Filter States)'),
         geo = g
       )
   })
   
-  
+  # Function for line and scatter plot
   output$linePlot2 <- renderPlotly({
     
+    #Reading in the extra option multiple selector input
     a <- str_detect(paste(input$checkGroup, collapse = ","), "1")
     b <- str_detect(paste(input$checkGroup, collapse = ","), "2")
     c <- str_detect(paste(input$checkGroup, collapse = ","), "3")
     d <- str_detect(paste(input$checkGroup, collapse = ","), "4")
     
-    if(d) {f <- list(size = 16)} else {f <- list(size = 14)}
+    #Setting the font size
+    if(d) {f <- list(size = 17)} else {f <- list(size = 14)}
+    #Switching between line and markers
     if(b) {m <- 'markers'} else {m <- 'lines+markers'}
     #observe({print(input$radio)})
     
-    if(a) {
-    if(input$radio == "total_pop"){
+    
+    #Switching the y-axis of scatter and line plot
+    
+    if(!a) {
+      
+      #To plot total count
+      
+    if(input$radio == "pop"){
       xtitle = "Population in Millions"
-      title = "Population trend in"
+      title = "Population Trend In"
       y = "total_pop"
     }
-    else if(input$radio == "violent_crime") {
+    else if(input$radio == "violent") {
       xtitle = "Violent Crime in Thousands"
-      title = "Violent Crime trend in"
+      title = "Violent Crime Trend In"
       y = "violent_crime"
     }
-    else if(input$radio == "rape_sum") {
+    else if(input$radio == "rape") {
       xtitle = "Number of Rapes"
-      title = "Rape trend in"
+      title = "Rape Trend In"
       y = "rape_sum"
     }
-    else if(input$radio == "agg_ass_sum") {
+    else if(input$radio == "assault") {
       xtitle = "Assaults in Thousands"
-      title = "Assault trend in"
+      title = "Assault Trend In"
       y = "agg_ass_sum"
     }
-    else if(input$radio == "homs_sum") {
+    else if(input$radio == "homicide") {
       xtitle = "Number of Homicides"
-      title = "Homicide trend in"
+      title = "Homicide Trend In"
       y = "homs_sum"
     }
-    else if(input$radio == "rob_sum") {
+    else if(input$radio == "robbbery") {
       xtitle = "Robberies in Thousands"
-      title = "Robbery trend in"
+      title = "Robbery Trend In"
       y = "rob_sum"
     }
     }
     else
     {
-    if(input$radio == "total_pop"){
+      
+      #For plots 100k variables
+      
+    if(input$radio == "pop"){
       xtitle = "Population in Millions"
-      title = "Population trend in"
+      title = "Population trend In"
       y = "total_pop"
     }
-    else if(input$radio == "violent_crime") {
-      xtitle = "Violent Crime Per 100k"
-      title = "Violent Crime trend in"
+    else if(input$radio == "violent") {
+      xtitle = "Violent Crimes Per 100k"
+      title = "Violent Crime Trend In"
       y = "violent_per_100k"
     }
-    else if(input$radio == "rape_sum") {
+    else if(input$radio == "rape") {
       xtitle = "Rapes Per 100k"
-      title = "Rape trend in"
+      title = "Rape Trend In"
       y = "rape_per_100k"
     }
-    else if(input$radio == "agg_ass_sum") {
+    else if(input$radio == "assault") {
       xtitle = "Assaults Per 100k"
-      title = "Assault trend in"
+      title = "Assault Trend In"
       y = "agg_ass_per_100k"
     }
-    else if(input$radio == "homs_sum") {
+    else if(input$radio == "homicide") {
       xtitle = "Homicides  Per 100k"
-      title = "Homicide trend in"
+      title = "Homicide Trend In"
       y = "homs_per_100k"
     }
-    else if(input$radio == "rob_sum") {
+    else if(input$radio == "robbery") {
       xtitle = "Robberies Per 100k"
-      title = "Robbery trend in"
+      title = "Robbery Trend In"
       y = "rob_per_100k"
     }
     }
     
+    #Detect geo click
     geo_click <- event_data("plotly_click")
+    
+    #Readin the input from city selector
     mycities <- input$cityInput
     
     #observe({(print(mycities))})
     if (length(geo_click) & length(mycities)) {
-      x <<- geo_data %>% filter(pop == geo_click$z)
+      
+      #observe({print("I am here")})
+      #z is still the old value. Need to automate the new value!
+      x <<- geo_data %>% filter(get(input$radio) == geo_click$z)
       p <- crime %>% filter(region == x[[1]], year >= input$slider[1], year <= input$slider[2]) %>% filter(city %in% mycities) %>% 
         plot_ly(x = ~year, y = ~get(y), type = 'scatter', 
-                mode = m, split = ~city,  text = ~paste("Total Crime in ", city)) %>% 
-        layout(title = ~paste(title, x[[1]]) ,xaxis = list(title = "Years", titlefont = f, tickfont = f),
+                mode = m, split = ~city,  text = ~paste("Total Crime In ", city)) %>% 
+        layout(title = ~paste("<br>",title, x[[1]]), font = f ,xaxis = list(title = "Years", titlefont = f, tickfont = f),
                yaxis = list(title = xtitle, titlefont = f, titlefont = f),
                legend = list(font = f),showlegend = c)
 
+    # } else if (length(mycities)){
+    #   #observe({print("I am here too")})
+    #   p <- crime %>% filter(year >= input$slider[1], year <= input$slider[2]) %>% filter(city %in% mycities) %>% 
+    #     plot_ly(x = ~year, y = ~get(y), type = 'scatter', 
+    #             mode = m, split = ~city,  text = ~paste("Total Crime In ", city)) %>% 
+    #     layout(title = ~paste("<br>",title, x[[1]]), font = f ,xaxis = list(title = "Years", titlefont = f, tickfont = f),
+    #            yaxis = list(title = xtitle, titlefont = f, titlefont = f),
+    #            legend = list(font = f),showlegend = c)
     } else {
-      plotly_empty()
+      #observe({print("I am here too")})
+      plot_data <- crime %>% filter(year >= input$slider[1], year <= input$slider[2])  %>%  group_by(region, year) %>%
+        summarise(custom = sum(get(y), na.rm = TRUE))
+      plot_data %>% 
+        plot_ly(x = ~year, y = ~custom, type = 'scatter', 
+                mode = m, split = ~region,  text = ~paste("Total Crime In ", region)) %>% 
+        layout(title =  ~paste("<br>",title, "US"), font = f, xaxis = list(title = "Years", titlefont = f, tickfont = f),
+               yaxis = list(title = xtitle, titlefont = f, titlefont = f),
+               legend = list(font = f),showlegend = c)
     }
   })
   
   #https://stackoverflow.com/questions/36980999/change-plotly-chart-y-variable-based-on-selectinput#
   
+  #Function for multiple city selector
+  
   output$cities <- renderUI({
+    
+ 
     
     d <- event_data("plotly_click")
     if (length(d)) {
-      x <- geo_data %>% filter(pop == d$z)
+      observe({print(d)})
+      observe({print(input$radio)})
+      x <- geo_data %>% filter(get(input$radio) == d$z)
+      observe({print(x)})
       q <- crime %>% filter(region == x[[1]]) %>%
         group_by(city) %>% summarise() %>% as.list()
       selectInput(
         "cityInput",
-        h4("Select Cities", id = "myh5"),
+        h3("Cities Selected"),
         sort(q$city),
         selected = q$city,
-        multiple = TRUE)
-    } else {
-      selectInput(
-        "cityInput",
-        h3("Select Cities"),
-        sort(unique(crime$city)),
         multiple = TRUE)
     }
   })
   
+  #To update data table when filters change
+  
+  data_func <- reactive({
+    
+    mycities <- input$cityInput
+    #observe({print(mycities)})
+    if(length(mycities)) {crime %>% filter(year >= input$slider[1], year <= input$slider[2]) %>% filter(city %in% mycities)}
+    else
+    {crime %>% filter(year >= input$slider[1], year <= input$slider[2])}
+    
+  })
+  
+  #Functino to output the data table
+  
+  output$mytable <- renderDataTable({
+    
+    DT::datatable(data = data_func(),
+                  extensions = 'Buttons', 
+                  options = list(
+                    scrollX = TRUE,
+                    dom = 'Bfrtip',
+                    buttons = c('copy', 'csv', 'excel', 'pdf')
+    ))
+  })
+  
+  #For rendering the tabs of shiny dashboard
+  
+  output$menuitem <- renderMenu({
+    menuItem("Menu item", icon = icon("calendar"))
+  })
   
 })
 
