@@ -5,8 +5,9 @@ account: avinashkz
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 258858
-bundleId: 1186037
+bundleId: 1196771
 url: https://avinashkz.shinyapps.io/marshall_violent_crimes/
-when: 1516574075.59939
+when: 1517169804.8302
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: preprocess.Rmd|test.Rmd

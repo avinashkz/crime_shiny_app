@@ -134,7 +134,7 @@ shinyServer(function(input, output) {
       title = "Homicide Trend In"
       y = "homs_sum"
     }
-    else if(input$radio == "robbbery") {
+    else if(input$radio == "robbery") {
       xtitle = "Robberies in Thousands"
       title = "Robbery Trend In"
       y = "rob_sum"
