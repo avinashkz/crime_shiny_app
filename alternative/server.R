@@ -20,7 +20,7 @@ shinyServer(function(input, output) {
       xtitle = "Population in Millions"
       title = "Population"
       q = "pop"
-      color = "#DAF7A6"
+      color = "#FFC300"
     }
     else if(input$radio == "violent_crime") {
       xtitle = "Violent Crime in Thousands"
@@ -32,25 +32,25 @@ shinyServer(function(input, output) {
       xtitle = "Number of Rapes"
       title = "Rape"
       q = "rape"
-      color = "#FFC300"
+      color = "#F39C12"
     }
     else if(input$radio == "agg_ass_sum") {
       xtitle = "Assaults in Thousands"
       title = "Assault"
       q = "assault"
-      color = "#FF5733"
+      color = "#E74C3C"
     }
     else if(input$radio == "homs_sum") {
       xtitle = "Number of Homicides"
       title = "Homicide"
       q = "homicide"
-      color = "#C70039"
+      color = "#2980B9"
     }
     else if(input$radio == "rob_sum") {
       xtitle = "Robberies in Thousands"
       title = "Robbery"
       q = "robbery"
-      color = "#900C3F"
+      color = "#8E44AD"
     }
     
     #Filter the data for plotting the geo map
@@ -80,7 +80,7 @@ shinyServer(function(input, output) {
         z = ~get(q), text = ~hover, locations = ~code,
         color = ~pop, colors = c(color, "#323232")
       ) %>%
-      colorbar(title = "Crime in Thousands") %>%
+      colorbar(title = xtitle) %>%
       layout(
         title = paste('<br>Interactive', title, 'Map(Click to Filter States)'),
         geo = g

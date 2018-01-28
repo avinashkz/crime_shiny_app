@@ -21,8 +21,8 @@ dashboardPage(skin="green",
       #Tab for table
       menuItem("Data Table", tabName = "Data", icon = icon("table")),
       
-              conditionalPanel(
-                "input.menu == 'Dashboard'",
+              
+                
                 
                 #Slider for filtering year
                sliderInput("slider", h3("Filter Year", id = "myh3"),
@@ -30,16 +30,18 @@ dashboardPage(skin="green",
                
                # Multiple cities selector for line and scatter plot
                uiOutput("cities"),
-      
+               
+         
+    conditionalPanel("input.menu == 'Dashboard'",
                #Radio buttons for selecting y-axis for line and scatter plot
-               radioButtons("radio", h3("Select Feature"),
-                            choices = list("Total Population" = "total_pop", "Total Crimes" = "violent_crime","Rape" = "rape_sum",
+               radioButtons("radio", h3("Select Feature", id = "myh3"),
+                            choices = list( "Total Crimes" = "violent_crime","Total Population" = "total_pop","Rape" = "rape_sum",
                                            "Assault" = "agg_ass_sum", "Homicide" = "homs_sum", "Robbery" = "rob_sum"),selected = "violent_crime"),
                
       
               # Extra options for user.
                checkboxGroupInput("checkGroup", 
-                                  h3("Extra Options"), 
+                                  h3("Extra Options", id = "myh3"), 
                                   choices = c("Crime Per 100k" = 1, 
                                               "Remove Trace" = 2, 
                                               "Display Legend" = 3, 
@@ -47,10 +49,10 @@ dashboardPage(skin="green",
                                   selected = c(3))
               
               
-              
               #https://stackoverflow.com/questions/29925585/conditional-panel-in-shiny-dashboard
               
-              )
+    )
+              
      
 
               ),
