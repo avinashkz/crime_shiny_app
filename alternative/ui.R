@@ -36,7 +36,6 @@ dashboardPage(skin="green",
                             choices = list("Total Population" = "total_pop", "Total Crimes" = "violent_crime","Rape" = "rape_sum",
                                            "Assault" = "agg_ass_sum", "Homicide" = "homs_sum", "Robbery" = "rob_sum"),selected = "violent_crime"),
                
-               h3("Click on Map to Filter States"),
       
               # Extra options for user.
                checkboxGroupInput("checkGroup", 
@@ -77,10 +76,8 @@ dashboardPage(skin="green",
               tabName = "Dashboard",
               
               fluidRow(
-                column(2,tags$div(class = "alert alert-dismissible alert-warning",
-                                  tags$h4(class = "alert-heading", "Click on Map to Filter States")
-                                  )),
-                column(10,plotlyOutput("geoPlot"))
+                
+                column(12,plotlyOutput("geoPlot"))
                        
               ),
               withSpinner(plotlyOutput("linePlot2", height="340"))

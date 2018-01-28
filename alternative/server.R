@@ -16,6 +16,43 @@ shinyServer(function(input, output) {
   #Functino for geo plot
   output$geoPlot <- renderPlotly({
     
+    if(input$radio == "total_pop"){
+      xtitle = "Population in Millions"
+      title = "Population"
+      q = "pop"
+      color = "#DAF7A6"
+    }
+    else if(input$radio == "violent_crime") {
+      xtitle = "Violent Crime in Thousands"
+      title = "Violent Crimes"
+      q = "violent"
+      color = "#008d4b"
+    }
+    else if(input$radio == "rape_sum") {
+      xtitle = "Number of Rapes"
+      title = "Rape"
+      q = "rape"
+      color = "#FFC300"
+    }
+    else if(input$radio == "agg_ass_sum") {
+      xtitle = "Assaults in Thousands"
+      title = "Assault"
+      q = "assault"
+      color = "#FF5733"
+    }
+    else if(input$radio == "homs_sum") {
+      xtitle = "Number of Homicides"
+      title = "Homicide"
+      q = "homicide"
+      color = "#C70039"
+    }
+    else if(input$radio == "rob_sum") {
+      xtitle = "Robberies in Thousands"
+      title = "Robbery"
+      q = "robbery"
+      color = "#900C3F"
+    }
+    
     #Filter the data for plotting the geo map
     geo_data <<- crime %>% filter(year == 2014) %>%  group_by(region, code) %>%
       summarise(pop = sum(total_pop, na.rm = TRUE), rape = sum(rape_sum, na.rm = TRUE), assault = sum(agg_ass_sum, na.rm = TRUE),
@@ -40,12 +77,12 @@ shinyServer(function(input, output) {
     #Plot geo plot using shiny
     plot1 <- plot_geo(geo_data, locationmode = 'USA-states') %>%
       add_trace(
-        z = ~violent, text = ~hover, locations = ~code,
-        color = ~pop, colors = c("#008d4b", "#323232")
+        z = ~get(q), text = ~hover, locations = ~code,
+        color = ~pop, colors = c(color, "#323232")
       ) %>%
       colorbar(title = "Crime in Thousands") %>%
       layout(
-        title = '<br>Interactive Map(Click to Filter States)',
+        title = paste('<br>Interactive', title, 'Map(Click to Filter States)'),
         geo = g
       )
   })
