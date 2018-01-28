@@ -16,37 +16,37 @@ shinyServer(function(input, output) {
   #Functino for geo plot
   output$geoPlot <- renderPlotly({
     
-    if(input$radio == "total_pop"){
+    if(input$radio == "pop"){
       xtitle = "Population in Millions"
       title = "Population"
       q = "pop"
       color = "#FFC300"
     }
-    else if(input$radio == "violent_crime") {
+    else if(input$radio == "violent") {
       xtitle = "Violent Crime in Thousands"
       title = "Violent Crimes"
       q = "violent"
       color = "#008d4b"
     }
-    else if(input$radio == "rape_sum") {
+    else if(input$radio == "rape") {
       xtitle = "Number of Rapes"
       title = "Rape"
       q = "rape"
       color = "#F39C12"
     }
-    else if(input$radio == "agg_ass_sum") {
+    else if(input$radio == "assault") {
       xtitle = "Assaults in Thousands"
       title = "Assault"
       q = "assault"
       color = "#E74C3C"
     }
-    else if(input$radio == "homs_sum") {
+    else if(input$radio == "homicide") {
       xtitle = "Number of Homicides"
       title = "Homicide"
       q = "homicide"
       color = "#2980B9"
     }
-    else if(input$radio == "rob_sum") {
+    else if(input$radio == "robbery") {
       xtitle = "Robberies in Thousands"
       title = "Robbery"
       q = "robbery"
@@ -54,14 +54,9 @@ shinyServer(function(input, output) {
     }
     
     #Filter the data for plotting the geo map
-    
-    base <- crime  %>%  group_by(region, code, city) %>%
-      summarise(pop = mean(total_pop, na.rm = TRUE), rape = mean(rape_sum, na.rm = TRUE), assault = mean(agg_ass_sum, na.rm = TRUE),
-                robbery = mean(rob_sum, na.rm = TRUE), homicide = mean(homs_sum, na.rm = TRUE), violent = mean(violent_crime, na.rm = TRUE))
-    
-    geo_data <<- base  %>%  group_by(region, code) %>%
-      summarise(pop = sum(pop, na.rm = TRUE), rape = sum(rape, na.rm = TRUE), assault = sum(assault, na.rm = TRUE),
-                robbery = sum(robbery, na.rm = TRUE), homicide = sum(homicide, na.rm = TRUE), violent = sum(violent, na.rm = TRUE))
+    geo_data <<- crime %>% filter(year == 2014) %>%  group_by(region, code) %>%
+      summarise(pop = sum(total_pop, na.rm = TRUE), rape = sum(rape_sum, na.rm = TRUE), assault = sum(agg_ass_sum, na.rm = TRUE),
+                robbery = sum(rob_sum, na.rm = TRUE), homicide = sum(homs_sum, na.rm = TRUE), violent = sum(violent_crime, na.rm = TRUE))
     
     #Creating column for contents to hover
     geo_data$hover <- with(geo_data, paste(region, '<br>',
