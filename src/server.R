@@ -12,45 +12,49 @@ crime <- read_csv("processed_data_national.csv")
 
 
 shinyServer(function(input, output) {
-   
+  
+
+  
   #Functino for geo plot
   output$geoPlot <- renderPlotly({
+    
+    my_colors <- c('#d73027','#fc8d59','#fee08b','#d9ef8b','#91cf60','#1a9850')
     
     if(input$radio == "pop"){
       xtitle = "Population in Millions"
       title = "Population"
       q = "pop"
-      color = "#FFC300"
+      color = my_colors[2]
     }
     else if(input$radio == "violent") {
       xtitle = "Violent Crime in Thousands"
       title = "Violent Crimes"
       q = "violent"
-      color = "#008d4b"
+      color = my_colors[1]
     }
     else if(input$radio == "rape") {
       xtitle = "Number of Rapes"
       title = "Rape"
       q = "rape"
-      color = "#F39C12"
+      color = my_colors[3]
     }
     else if(input$radio == "assault") {
       xtitle = "Assaults in Thousands"
       title = "Assault"
       q = "assault"
-      color = "#E74C3C"
+      color = my_colors[4]
     }
     else if(input$radio == "homicide") {
       xtitle = "Number of Homicides"
       title = "Homicide"
       q = "homicide"
-      color = "#2980B9"
+      color = my_colors[5]
     }
     else if(input$radio == "robbery") {
       xtitle = "Robberies in Thousands"
       title = "Robbery"
       q = "robbery"
-      color = "#8E44AD"
+      color = my_colors[6]
     }
     
     #Filter the data for plotting the geo map

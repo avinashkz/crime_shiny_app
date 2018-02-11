@@ -7,3 +7,37 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+library(readr)
+library(tidyr)
+
+library(ggmap)
+```
+
+```{r}
+crime <- read_csv("../src/processed_data_national.csv")
+```
+
+```{r}
+crime
+
+coord <- geocode("Baltimore") %>% as_vector()
+
+coord[1]
+cities <- crime %>% group_by(city) %>% summarise()
+
+coord <- function(x)
+
+mini_city <- cities[1:5,]
+
+
+mini_city %>% mutate(long = geocode(city))
+
+for (i in range(length(mini_city))){
+  print(geocode(mini_city$city[i]))
+  }
+
+
+mini_city$city[i]
+```
+

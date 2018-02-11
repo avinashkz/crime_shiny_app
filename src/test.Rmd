@@ -45,12 +45,6 @@ maps::
 city <- map_data("city")
 
 
-
-
-
-
-
-
 state_colors <- sample(x = country_colors, size = 49)
 
 new <- states %>% group_by(region) %>% summarise() %>% as.list()
