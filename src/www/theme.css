@@ -1,60 +1,44 @@
-.irs-slider {
-  background: #aaa ;
-  border: black;
+.skin-green .main-header .navbar {
+    background-color: #1f282d;
 }
 
-.irs-bar{
-  background: black;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
+.skin-green .main-header .navbar .sidebar-toggle {
+    color: #008d49;
 }
 
-.irs-from, .irs-to{
-  color: #fff;
-  background: #000 ;
-  font-size: 90%;
-  margin-bottom:20px ;
+.skin-green .main-header .navbar .sidebar-toggle:hover {
+    background-color: #026f3a;
 }
 
-
-.main-sidebar, .treeview-menu{
-  background-color:#008d4b !important;
-}
-
-.irs-grid-text{
-  color: #000 ;
-  font-size: 100%;
-}
-
-
-.irs-grid-pol, .irs-grid-pol.small{
-  background:#000;
-}
-
-
-.irs-min, .irs-max{
-  background: rgba(0, 0, 0, 0.40);
-}
-
-#myh5{
-  color:#000;
-  font-size: 100% !important;
-}
-
-.control-label, .sidebar{
-  color:#000;
-  font-size: 110%;
+.skin-green .sidebar-menu>li.active>a, .skin-green .sidebar-menu>li:hover>a {
+    color: #fff;
+    background: #008d4a;
+    border-left-color: #20282e;
 }
 
 .logo, .main-header{
-  color:#000 !important;
+  color:#008d49 !important;
   font-weight:400 !important;
   font-size:135% !important;
-  background-color: #008d4b !important;
+  background-color: #1f282d !important;
 }
 
 .content-wrapper{
   background-color:#fff;
+}
+
+#myh5{
+  color:#a0adb4;
+  font-size: 100% !important;
+}
+
+.main-sidebar, .treeview-menu {
+    background-color: #20282e !important;
+}
+
+.control-label, .sidebar{
+  color:#a0adb4;
+  font-size: 110%;
 }
 
 .shiny-input-container {
@@ -64,3 +48,37 @@
 .form-group {
     margin-bottom: 5px;
 }
+
+
+.irs-slider {
+  background: #aaa ;
+  border: black;
+}
+
+.irs-bar {
+    background: #008d49;
+    border-top: 1px solid #008d49;
+    border-bottom: 1px solid #008d49;
+}
+
+.irs-from, .irs-to {
+    color: #21282f;
+    background: #6c7b74;
+    font-size: 90%;
+    margin-bottom: 20px;
+}
+
+.irs-grid-text{
+  color: #a0adb4 ;
+  font-size: 100%;
+}
+
+.irs-grid-pol, .irs-grid-pol.small{
+  background:#a0adb4;
+}
+
+.irs-min, .irs-max{
+  background: rgba(0, 0, 0, 0.40);
+}
+
+
