@@ -89,7 +89,7 @@ shinyServer(function(input, output) {
       ) %>%
       colorbar(title = xtitle) %>%
       layout(
-        title = paste('<br>Interactive', title, 'Map(Click to Filter States)'),
+        title = paste('<br>', title, 'Map(State Selector)'),
         geo = g, font = f
       )
   })
