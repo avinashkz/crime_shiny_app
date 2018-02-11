@@ -21,7 +21,7 @@ shinyServer(function(input, output) {
     font <- "'Lucida Console', Monaco, monospace"
     f <- list(family = font)
     
-    my_colors <- c('#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#b15928')
+    my_colors <- c('#008d4a', '#ffc300', '#FD850E', '#e31a1c', '#5D11A9', '#1131A9')
     
     if(input$radio == "pop"){
       xtitle = "Population in Millions"
@@ -100,7 +100,6 @@ shinyServer(function(input, output) {
     #Reading in the extra option multiple selector input
     a <- str_detect(paste(input$checkGroup, collapse = ","), "1")
     b <- !str_detect(paste(input$checkGroup, collapse = ","), "2")
-    observe({print(b)})
     font <- "'Lucida Console', Monaco, monospace"
     
     #Setting the font size
