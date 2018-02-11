@@ -14,9 +14,16 @@
     color: #fff;
     background: #008d4a;
     border-left-color: #20282e;
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+.skin-green .sidebar-menu>li>a {
+    border-left: 3px solid transparent;
+    font-family: "Lucida Console", Monaco, monospace;
 }
 
 .logo, .main-header{
+  font-family: "Lucida Console", Monaco, monospace !important;
   color:#008d49 !important;
   font-weight:400 !important;
   font-size:135% !important;
@@ -27,9 +34,9 @@
   background-color:#fff;
 }
 
-#myh5{
+#myh3{
+  font-family: "Lucida Console", Monaco, monospace;
   color:#a0adb4;
-  font-size: 100% !important;
 }
 
 .main-sidebar, .treeview-menu {
@@ -38,7 +45,7 @@
 
 .control-label, .sidebar{
   color:#a0adb4;
-  font-size: 110%;
+  font-family: "Lucida Console", Monaco, monospace;
 }
 
 .shiny-input-container {
