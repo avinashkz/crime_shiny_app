@@ -18,6 +18,9 @@ shinyServer(function(input, output) {
   #Functino for geo plot
   output$geoPlot <- renderPlotly({
     
+    font <- "'Lucida Console', Monaco, monospace"
+    f <- list(family = font)
+    
     my_colors <- c('#d73027','#fc8d59','#fee08b','#d9ef8b','#91cf60','#1a9850')
     
     if(input$radio == "pop"){
@@ -87,7 +90,7 @@ shinyServer(function(input, output) {
       colorbar(title = xtitle) %>%
       layout(
         title = paste('<br>Interactive', title, 'Map(Click to Filter States)'),
-        geo = g
+        geo = g, font = f
       )
   })
   
@@ -100,8 +103,10 @@ shinyServer(function(input, output) {
     c <- str_detect(paste(input$checkGroup, collapse = ","), "3")
     d <- str_detect(paste(input$checkGroup, collapse = ","), "4")
     
+    font <- "'Lucida Console', Monaco, monospace"
+    
     #Setting the font size
-    if(d) {f <- list(size = 17)} else {f <- list(size = 14)}
+    if(d) {f <- list(family = font, size = 17)} else {f <- list(family = font, size = 14)}
     #Switching between line and markers
     if(b) {m <- 'markers'} else {m <- 'lines+markers'}
     #observe({print(input$radio)})
