@@ -21,7 +21,7 @@ shinyServer(function(input, output) {
     font <- "'Lucida Console', Monaco, monospace"
     f <- list(family = font)
     
-    my_colors <- c('#d73027','#fc8d59','#fee08b','#d9ef8b','#91cf60','#1a9850')
+    my_colors <- c('#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#b15928')
     
     if(input$radio == "pop"){
       xtitle = "Population in Millions"
@@ -30,7 +30,7 @@ shinyServer(function(input, output) {
       color = my_colors[2]
     }
     else if(input$radio == "violent") {
-      xtitle = "Violent Crime in Thousands"
+      xtitle = "Crime in Thousands"
       title = "Violent Crimes"
       q = "violent"
       color = my_colors[1]
@@ -99,18 +99,15 @@ shinyServer(function(input, output) {
     
     #Reading in the extra option multiple selector input
     a <- str_detect(paste(input$checkGroup, collapse = ","), "1")
-    b <- str_detect(paste(input$checkGroup, collapse = ","), "2")
-    c <- str_detect(paste(input$checkGroup, collapse = ","), "3")
-    d <- str_detect(paste(input$checkGroup, collapse = ","), "4")
-    
+    b <- !str_detect(paste(input$checkGroup, collapse = ","), "2")
+    observe({print(b)})
     font <- "'Lucida Console', Monaco, monospace"
     
     #Setting the font size
-    if(d) {f <- list(family = font, size = 17)} else {f <- list(family = font, size = 14)}
-    #Switching between line and markers
-    if(b) {m <- 'markers'} else {m <- 'lines+markers'}
-    #observe({print(input$radio)})
+    f <- list(family = font)
     
+    #Switching between line and markers
+    m <- 'lines+markers'
     
     #Switching the y-axis of scatter and line plot
     
@@ -203,7 +200,7 @@ shinyServer(function(input, output) {
                 mode = m, split = ~city,  text = ~paste("Total Crime In ", city)) %>% 
         layout(title = ~paste("<br>",title, x[[1]]), font = f ,xaxis = list(title = "Years", titlefont = f, tickfont = f),
                yaxis = list(title = xtitle, titlefont = f, titlefont = f),
-               legend = list(font = f),showlegend = c)
+               legend = list(font = f),showlegend = b)
 
     # } else if (length(mycities)){
     #   #observe({print("I am here too")})
@@ -222,7 +219,7 @@ shinyServer(function(input, output) {
                 mode = m, split = ~region,  text = ~paste("Total Crime In ", region)) %>% 
         layout(title =  ~paste("<br>",title, "US"), font = f, xaxis = list(title = "Years", titlefont = f, tickfont = f),
                yaxis = list(title = xtitle, titlefont = f, titlefont = f),
-               legend = list(font = f),showlegend = c)
+               legend = list(font = f),showlegend = b)
     }
   })
   
