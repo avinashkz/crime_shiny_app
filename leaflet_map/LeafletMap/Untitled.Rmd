@@ -1,0 +1,144 @@
+---
+title: "Trial"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+
+res <- read.csv(file = "off2.csv")
+res
+```
+
+
+```{r}
+library(tidyverse)
+res %>% select(County) %>% group_by(County) %>% summarise(n())
+names(res)
+
+c("State", "County", "Violent.crime", "Murder.and.nonnegligent.manslaughter", "Rape..revised.definition.1", "Rape..legacy.definition.2", "Robbery", "Aggravated.assault", "Property.crime", "Burglary", "Larceny..theft", "Motor.vehicle.theft", "Arson")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+```{r}
+library(tidyverse)
+library(stringi)
+
+res <- res %>% separate(col = State , into = c("State", "Type"), sep = " - " )
+
+res$State <- stri_trans_totitle(res$State)
+
+
+library(ggmap)
+
+res
+
+
+res <- res %>% mutate(Loc = paste(County, State, sep = ", "))
+
+
+geocode("Alabama, Autauga")
+
+
+res <- cbind(res, lat = rep(0,nrow(res)), long = rep(0,nrow(res)))
+
+
+mini_res <- res[1:10,]
+
+
+for (i in 1:nrow(res)){
+  coord <- geocode(res[i,]$Loc)
+  res[i,]$long <- coord[[1]]
+  res[i,]$lat <- coord[[2]]
+}
+
+
+for (i in 1:10){
+  if(is.na(mini_res[i,]$long) || is.na(mini_res[i,]$lat)) {
+  coord <- geocode(mini_res[i,]$Loc)
+  mini_res[i,]$long <- coord[[1]]
+  mini_res[i,]$lat <- coord[[2]]
+  }
+  }
+
+mini_res[1,]$lat <- coord[[1]]
+
+i <- 1
+
+is.na(mini_res[1,]$lat)
+
+write_csv(res, "../coord.csv")
+
+
+
+
+```
+
+
+
+
+```{r}
+library(plotly)
+
+df <- read.csv("https://raw.githubusercontent.com/bcdunbar/datasets/master/californiaPopulation.csv")
+
+cali <- map_data("county")
+
+pop <- df %>%
+  group_by(County.Name) %>%
+  summarise(Pop = sum(Population))
+
+res
+
+pop$County.Name <- tolower(pop$County.Name) # matching string
+
+cali_pop <- merge(cali, pop, by.x = "subregion", by.y = "County.Name")
+
+cali_pop$pop_cat <- cut(cali_pop$Pop, breaks = c(seq(0, 11000000, by = 500000)), labels=1:22)
+
+geo <- list(
+  scope = 'usa',
+  showland = TRUE,
+  landcolor = toRGB("gray95"),
+  countrycolor = toRGB("gray80")
+)
+
+p <- cali_pop %>%
+  group_by(group) %>%
+  plot_geo(
+    x = ~long, y = ~lat, color = ~pop_cat, colors = c('#ffeda0','#f03b20'),
+    text = ~subregion, hoverinfo = 'text') %>%
+  add_polygons(line = list(width = 0.4)) %>%
+  add_polygons(
+    fillcolor = 'transparent',
+    line = list(color = 'black', width = 0.5),
+    showlegend = FALSE, hoverinfo = 'none'
+  ) %>%
+  layout(
+    title = "California Population by County",
+    geo = geo)
+
+
+p
+```
+
